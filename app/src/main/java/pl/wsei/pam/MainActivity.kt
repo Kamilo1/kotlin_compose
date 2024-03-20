@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Toast
 import pl.wsei.pam.lab01.Lab01Activity
 import pl.wsei.pam.lab01.R
+import pl.wsei.pam.lab02.Lab02Activity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,9 +18,12 @@ class MainActivity : AppCompatActivity() {
 
     fun onClickMainBtnRunLab01(View: View){
         val intent = Intent(this, Lab01Activity::class.java)
+        Toast.makeText(this, "Lab1", Toast.LENGTH_SHORT).show()
         startActivity(intent)
     }
     fun onClickMainBtnRunLab02(View: View){
-        Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show()
+        val intent = Intent(this,Lab02Activity::class.java)
+        Toast.makeText(this, "Lab2", Toast.LENGTH_SHORT).show()
+        startActivity(intent)
     }
 }
