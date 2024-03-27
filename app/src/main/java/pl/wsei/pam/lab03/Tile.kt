@@ -2,7 +2,7 @@ package pl.wsei.pam.lab03
 
 import android.widget.ImageButton
 
-data class Tile(val button: ImageButton, val tileResource: Int, val deckResource: Int) {
+data class Tile(val button: ImageButton, var tileResource: Int, val deckResource: Int) {
     init {
         button.setImageResource(deckResource)
     }
@@ -13,11 +13,14 @@ data class Tile(val button: ImageButton, val tileResource: Int, val deckResource
         }
         set(value){
             _revealed = value
-            if(_revealed) button.setImageResource(tileResource) else button.setImageResource(deckResource)
-
+            if(_revealed){
+                button.setImageResource(tileResource)
+            }
+            else {
+                button.setImageResource(deckResource)
+            }
         }
     fun removeOnClickListener(){
         button.setOnClickListener(null)
     }
 }
-

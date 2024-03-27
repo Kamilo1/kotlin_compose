@@ -2,6 +2,7 @@ package pl.wsei.pam.lab03
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.view.Gravity
 import android.widget.GridLayout
 import android.widget.ImageButton
@@ -13,6 +14,7 @@ import kotlin.concurrent.schedule
 
 class Lab03Activity : AppCompatActivity() {
     private lateinit var mBoardModel: MemoryBoardView
+    private lateinit var mBoard: GridLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -22,15 +24,21 @@ class Lab03Activity : AppCompatActivity() {
         val rows = intent.getIntExtra("rows", 3)
         println(rows)
         println(columns)
-        var mBoard: GridLayout = findViewById(R.id.main_layout_3)
+        mBoard= findViewById(R.id.main_layout_3)
         mBoard.columnCount = columns
         mBoard.rowCount = rows
 
         mBoardModel = MemoryBoardView(mBoard, columns, rows)
+
         if (savedInstanceState != null) {
             val gameStateString = savedInstanceState.getString("gameState")
             val gameState = gameStateString?.split(",")?.map { it.toInt() } ?: listOf()
             mBoardModel.setState(gameState)
+        }else{
+            val mBoard: GridLayout = findViewById(R.id.main_layout_3)
+            mBoard.columnCount = columns
+            mBoard.rowCount = rows
+            mBoardModel = MemoryBoardView(mBoard, columns, rows)
         }
 
         mBoardModel.setOnGameChangeListener { e ->
@@ -52,7 +60,7 @@ class Lab03Activity : AppCompatActivity() {
                         e.tiles.forEach { tile ->
                             tile.revealed = true
                         }
-                        Timer().schedule(1000) {
+                        Timer().schedule(700) {
                             runOnUiThread {
                                 e.tiles.forEach { tile ->
                                     tile.revealed = false
@@ -60,7 +68,6 @@ class Lab03Activity : AppCompatActivity() {
                             }
                         }
                     }
-
                     GameStates.Finished -> {
                         Toast.makeText(this@Lab03Activity, "Game finished", Toast.LENGTH_SHORT)
                             .show()
@@ -76,4 +83,9 @@ class Lab03Activity : AppCompatActivity() {
         val gameState = mBoardModel.getState().joinToString(",")
         outState.putString("gameState", gameState)
     }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+    }
+
 }

@@ -48,17 +48,14 @@ class MemoryBoardView(
                 val btn = ImageButton(gridLayout.context).also {
                     it.tag = tag
                     val layoutParams = GridLayout.LayoutParams()
-                    it.setImageResource(R.drawable.baseline_audiotrack_24)
                     layoutParams.width = 0
                     layoutParams.height = 0
                     layoutParams.setGravity(Gravity.CENTER)
                     layoutParams.columnSpec = GridLayout.spec(col, 1, 1f)
                     layoutParams.rowSpec = GridLayout.spec(row, 1, 1f)
                     it.layoutParams = layoutParams
-                    it.setImageResource(R.drawable.baseline_flight_24)
                     gridLayout.addView(it)
                 }
-                tiles[tag] = (Tile(btn, shuffledIcons.get(0), R.drawable.baseline_rocket_launch_24))
                 addTile(btn, shuffledIcons.removeAt(0))
             }
         }
@@ -94,6 +91,7 @@ class MemoryBoardView(
             val tileState = state[index]
             tile.revealed = tileState != -1
             if (tile.revealed) {
+                tile.tileResource = state[index]
                 tile.button.setImageResource(tileState)
             } else {
                 tile.button.setImageResource(tile.deckResource)
