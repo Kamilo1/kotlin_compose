@@ -24,9 +24,9 @@ class Lab02Activity : AppCompatActivity() {
     }
 
     private fun goToBoard(boardSize: String) {
-        val (rows, columns) = boardSize.split("x")
-        println(rows)
-        println(columns)
+        val rows: Int = Character.getNumericValue(boardSize[0])
+        val columns: Int = Character.getNumericValue(boardSize[4])
+
         Toast.makeText(this, "Creating a $rows x $columns board", Toast.LENGTH_SHORT).show()
         val intent = Intent(this, Lab03Activity::class.java)
         intent.putExtra("columns", columns)
