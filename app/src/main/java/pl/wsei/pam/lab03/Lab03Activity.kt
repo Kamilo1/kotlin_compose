@@ -1,12 +1,10 @@
 package pl.wsei.pam.lab03
 
-import androidx.appcompat.app.AppCompatActivity
+import android.media.MediaPlayer
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.view.Gravity
 import android.widget.GridLayout
-import android.widget.ImageButton
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import pl.wsei.pam.lab01.R
 import java.util.Timer
 import kotlin.concurrent.schedule
@@ -14,8 +12,8 @@ import kotlin.concurrent.schedule
 
 class Lab03Activity : AppCompatActivity() {
     private lateinit var mBoardModel: MemoryBoardView
-    private lateinit var mBoard: GridLayout
-
+    lateinit var completionPlayer: MediaPlayer
+    lateinit var negativePLayer: MediaPlayer
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -24,7 +22,7 @@ class Lab03Activity : AppCompatActivity() {
         val rows = intent.getIntExtra("rows", 3)
         println(rows)
         println(columns)
-        mBoard= findViewById(R.id.main_layout_3)
+        var mBoard: GridLayout = findViewById(R.id.main_layout_3)
         mBoard.columnCount = columns
         mBoard.rowCount = rows
 
@@ -34,11 +32,6 @@ class Lab03Activity : AppCompatActivity() {
             val gameStateString = savedInstanceState.getString("gameState")
             val gameState = gameStateString?.split(",")?.map { it.toInt() } ?: listOf()
             mBoardModel.setState(gameState)
-        }else{
-            val mBoard: GridLayout = findViewById(R.id.main_layout_3)
-            mBoard.columnCount = columns
-            mBoard.rowCount = rows
-            mBoardModel = MemoryBoardView(mBoard, columns, rows)
         }
 
         mBoardModel.setOnGameChangeListener { e ->
@@ -53,13 +46,17 @@ class Lab03Activity : AppCompatActivity() {
                     GameStates.Match -> {
                         e.tiles.forEach { tile ->
                             tile.revealed = true
+                            mBoardModel.animatePairedButton(tile.button, Runnable { })
                         }
+
                     }
 
                     GameStates.NoMatch -> {
                         e.tiles.forEach { tile ->
                             tile.revealed = true
+                            mBoardModel.animateMismatchedPair(this@Lab03Activity, tile)
                         }
+
                         Timer().schedule(700) {
                             runOnUiThread {
                                 e.tiles.forEach { tile ->
@@ -68,6 +65,7 @@ class Lab03Activity : AppCompatActivity() {
                             }
                         }
                     }
+
                     GameStates.Finished -> {
                         Toast.makeText(this@Lab03Activity, "Game finished", Toast.LENGTH_SHORT)
                             .show()
@@ -86,6 +84,19 @@ class Lab03Activity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
+    }
+
+    override protected fun onResume() {
+        super.onResume()
+        completionPlayer = MediaPlayer.create(applicationContext, R.raw.completion)
+        negativePLayer = MediaPlayer.create(applicationContext, R.raw.negative_guitar)
+    }
+
+
+    override protected fun onPause() {
+        super.onPause();
+        completionPlayer.release()
+        negativePLayer.release()
     }
 
 }
