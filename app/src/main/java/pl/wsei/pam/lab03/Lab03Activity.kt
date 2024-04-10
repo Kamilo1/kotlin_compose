@@ -2,6 +2,9 @@ package pl.wsei.pam.lab03
 
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.GridLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +17,7 @@ class Lab03Activity : AppCompatActivity() {
     private lateinit var mBoardModel: MemoryBoardView
     lateinit var completionPlayer: MediaPlayer
     lateinit var negativePLayer: MediaPlayer
+    var isSound = true
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -46,7 +50,10 @@ class Lab03Activity : AppCompatActivity() {
                     GameStates.Match -> {
                         e.tiles.forEach { tile ->
                             tile.revealed = true
-                            completionPlayer.start()
+                            if (isSound) {
+                                completionPlayer.start()
+                            }
+
                             mBoardModel.animatePairedButton(tile.button, Runnable { })
                         }
 
@@ -55,7 +62,10 @@ class Lab03Activity : AppCompatActivity() {
                     GameStates.NoMatch -> {
                         e.tiles.forEach { tile ->
                             tile.revealed = true
-                            negativePLayer.start()
+                            if (isSound) {
+                                negativePLayer.start()
+                            }
+
                             mBoardModel.animateMismatchedPair(this@Lab03Activity, tile)
                         }
 
@@ -101,4 +111,33 @@ class Lab03Activity : AppCompatActivity() {
         negativePLayer.release()
     }
 
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = getMenuInflater()
+        inflater.inflate(R.menu.board_activity_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.getItemId()) {
+            R.id.board_activity_sound -> {
+                if (item.icon?.constantState?.equals(
+                        getResources().getDrawable(
+                            R.drawable.baseline_music_note_24,
+                            getTheme()
+                        ).getConstantState()
+                    ) == true
+                ) {
+                    Toast.makeText(this, "Sound turn off", Toast.LENGTH_SHORT).show();
+                    item.setIcon(R.drawable.baseline_music_note_24)
+                    isSound = false;
+                } else {
+                    Toast.makeText(this, "Sound turn on", Toast.LENGTH_SHORT).show()
+                    item.setIcon(R.drawable.baseline_music_note_24)
+                    isSound = true
+                }
+            }
+        }
+        return false
+    }
 }

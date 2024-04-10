@@ -26,4 +26,6 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, "Lab2", Toast.LENGTH_SHORT).show()
         startActivity(intent)
     }
+
+
 }
