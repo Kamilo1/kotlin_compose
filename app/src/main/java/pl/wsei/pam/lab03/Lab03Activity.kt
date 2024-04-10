@@ -46,6 +46,7 @@ class Lab03Activity : AppCompatActivity() {
                     GameStates.Match -> {
                         e.tiles.forEach { tile ->
                             tile.revealed = true
+                            completionPlayer.start()
                             mBoardModel.animatePairedButton(tile.button, Runnable { })
                         }
 
@@ -54,6 +55,7 @@ class Lab03Activity : AppCompatActivity() {
                     GameStates.NoMatch -> {
                         e.tiles.forEach { tile ->
                             tile.revealed = true
+                            negativePLayer.start()
                             mBoardModel.animateMismatchedPair(this@Lab03Activity, tile)
                         }
 
@@ -88,8 +90,8 @@ class Lab03Activity : AppCompatActivity() {
 
     override protected fun onResume() {
         super.onResume()
-        completionPlayer = MediaPlayer.create(applicationContext, R.raw.completion)
-        negativePLayer = MediaPlayer.create(applicationContext, R.raw.negative_guitar)
+        completionPlayer = MediaPlayer.create(applicationContext, R.raw.sucess)
+        negativePLayer = MediaPlayer.create(applicationContext, R.raw.defeat)
     }
 
 
