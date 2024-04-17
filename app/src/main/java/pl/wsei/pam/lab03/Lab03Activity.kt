@@ -112,32 +112,28 @@ class Lab03Activity : AppCompatActivity() {
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater: MenuInflater = getMenuInflater()
-        inflater.inflate(R.menu.board_activity_menu, menu)
-        return true
-    }
+    /* override fun onOptionsItemSelected(item: MenuItem): Boolean {
+         when (item.getItemId()) {
+             R.id.board_activity_sound -> {
+                 if (item.icon?.constantState?.equals(
+                         getResources().getDrawable(
+                             R.drawable.baseline_music_note_24,
+                             getTheme()
+                         ).getConstantState()
+                     ) == true
+                 ) {
+                     Toast.makeText(this, "Sound turn off", Toast.LENGTH_SHORT).show();
+                     item.setIcon(R.drawable.baseline_music_note_24)
+                     isSound = false;
+                 } else {
+                     Toast.makeText(this, "Sound turn on", Toast.LENGTH_SHORT).show()
+                     item.setIcon(R.drawable.baseline_music_note_24)
+                     isSound = true
+                 }
+             }
+         }
+         return false
+     }
+     */
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
-            R.id.board_activity_sound -> {
-                if (item.icon?.constantState?.equals(
-                        getResources().getDrawable(
-                            R.drawable.baseline_music_note_24,
-                            getTheme()
-                        ).getConstantState()
-                    ) == true
-                ) {
-                    Toast.makeText(this, "Sound turn off", Toast.LENGTH_SHORT).show();
-                    item.setIcon(R.drawable.baseline_music_note_24)
-                    isSound = false;
-                } else {
-                    Toast.makeText(this, "Sound turn on", Toast.LENGTH_SHORT).show()
-                    item.setIcon(R.drawable.baseline_music_note_24)
-                    isSound = true
-                }
-            }
-        }
-        return false
-    }
 }
