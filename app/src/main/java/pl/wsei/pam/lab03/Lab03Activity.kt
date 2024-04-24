@@ -17,11 +17,17 @@ class Lab03Activity : AppCompatActivity() {
     private lateinit var mBoardModel: MemoryBoardView
     lateinit var completionPlayer: MediaPlayer
     lateinit var negativePLayer: MediaPlayer
+    private lateinit var toolbar: androidx.appcompat.widget.Toolbar
     var isSound = true
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lab03)
+
+        toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+
         val columns = intent.getIntExtra("columns", 2)
         val rows = intent.getIntExtra("rows", 3)
         println(rows)
@@ -111,8 +117,32 @@ class Lab03Activity : AppCompatActivity() {
         negativePLayer.release()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.board_activity_menu, menu)
+        return true
+    }
 
-    /* override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    /* fun onOptionsItemSelected(item: MenuItem): Boolean {
+          when(item.getItemId()){
+              R.id.board_activity_sound -> {
+                  if (item.getIcon().getConstantState().equals(getResources().getDrawable(R.drawable.baseline_music_off_24, getTheme()).getConstantState())) {
+                      Toast.makeText(this, "Sound turn off", Toast.LENGTH_SHORT).show();
+                      item.setIcon(R.drawable.baseline_music_off_24)
+                      isSound = false;
+                  } else {
+                      Toast.makeText(this, "Sound turn on", Toast.LENGTH_SHORT).show()
+                      item.setIcon(R.drawable.baseline_music_off_24)
+                      isSound = true
+                  }
+              }
+          }
+          return false
+      }
+  */
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
          when (item.getItemId()) {
              R.id.board_activity_sound -> {
                  if (item.icon?.constantState?.equals(
@@ -134,6 +164,6 @@ class Lab03Activity : AppCompatActivity() {
          }
          return false
      }
-     */
+
 
 }

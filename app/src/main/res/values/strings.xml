@@ -47,4 +47,6 @@
     </string>
     <string name="board_activity_menu_sound" />
     <string name="activitytoolbar">ActivityToolbar</string>
+    <string name="title_activity_lab06">Lab06Activity</string>
+    <string name="lab6">Lab6</string>
 </resources>

@@ -12,16 +12,14 @@ import android.widget.Toolbar
 import pl.wsei.pam.lab01.Lab01Activity
 import pl.wsei.pam.lab01.R
 import pl.wsei.pam.lab02.Lab02Activity
+import pl.wsei.pam.lab06.Lab06Activity
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var toolbar: androidx.appcompat.widget.Toolbar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
 
     }
 
@@ -36,18 +34,11 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.board_activity_menu, menu)
-        return true
+    fun onClickMainBtnRunLab06(View: View) {
+        val intent = Intent(this, Lab06Activity::class.java)
+        Toast.makeText(this, "Lab6", Toast.LENGTH_SHORT).show()
+        startActivity(intent)
     }
 
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.board_activity_sound -> Toast.makeText(this, "Sound on", Toast.LENGTH_SHORT).show()
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
 }
