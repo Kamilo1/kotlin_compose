@@ -1,10 +1,16 @@
 package pl.wsei.pam.lab06
 
+import android.Manifest
 import android.app.DatePickerDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.clickable
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,17 +29,14 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
-
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -61,11 +64,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.Switch
+import androidx.core.app.NotificationCompat
+
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+//import com.google.accompanist.permissions.ExperimentalPermissionsApi
+//import com.google.accompanist.permissions.isGranted
+//import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.launch
 import pl.wsei.pam.lab06.Classes.FormViewModel
 import pl.wsei.pam.lab06.Classes.ListViewModel
@@ -76,9 +85,13 @@ import pl.wsei.pam.lab06.Data.TodoTaskForm
 import pl.wsei.pam.lab06.Data.TodoTaskUiState
 
 
+
+
 class Lab06Activity : ComponentActivity() {
+   // @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //createNotificationChannel()
         setContent {
             Lab06Theme {
                 Surface(
@@ -91,16 +104,25 @@ class Lab06Activity : ComponentActivity() {
         }
     }
 }
-
+//@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+//@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
+    /*val postNotificationPermission =
+        rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+    LaunchedEffect(key1 = true) {
+        if (!postNotificationPermission.status.isGranted) {
+            postNotificationPermission.launchPermissionRequest()
+        }
+    }*/
     NavHost(navController = navController, startDestination = "list") {
         composable("list") { ListScreen(navController = navController) }
         composable("form") { FormScreen(navController = navController) }
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
@@ -237,45 +259,7 @@ fun FormScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun PriorityDropdownMenu(selectedPriority: Priority, onPrioritySelected: (Priority) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
 
-
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
-    ) {
-
-        TextField(
-            readOnly = true,
-            value = selectedPriority.name,
-            onValueChange = {},
-            label = { Text("Priority") },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = true }
-        )
-
-
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            Priority.entries.forEach { priority ->
-                DropdownMenuItem(
-                    text = { Text(priority.name) },
-                    onClick = {
-                        onPrioritySelected(priority)
-                        expanded = true
-                    }
-                )
-            }
-        }
-    }
-}
 
 
 @Composable
@@ -323,27 +307,17 @@ fun ListItem(item: TodoTask, modifier: Modifier = Modifier) {
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = { onCompleteClicked(item) },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            ) {
-                Text(if (item.isDone) "Not Completed" else "Completed")
-            }
+
         }
     }
 }
 
-fun onCompleteClicked(item: TodoTask) {
-    TODO("Not yet implemented")
-}
-
 fun todoTasks(): List<TodoTask> {
     return listOf(
-        TodoTask("Clean dishes", LocalDate.of(2024, 4, 18), false, Priority.Low, 1),
-        TodoTask("Read for 1 hour", LocalDate.of(2024, 5, 12), false, Priority.High, 2),
-        TodoTask("Walk for 30 minutes", LocalDate.of(2024, 6, 28), true, Priority.Low, 3),
-        TodoTask("Cooking", LocalDate.of(2024, 8, 18), false, Priority.Medium, 4),
+        TodoTask("Programming", LocalDate.of(2024, 4, 18), false, Priority.Low,1),
+        TodoTask("Teaching", LocalDate.of(2024, 5, 12), false, Priority.High,2),
+        TodoTask("Learning", LocalDate.of(2024, 6, 28), true, Priority.Low,3),
+        TodoTask("Cooking", LocalDate.of(2024, 8, 18), false, Priority.Medium,4),
     )
 }
 
@@ -410,24 +384,18 @@ fun TodoTaskInputForm(
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        PriorityDropdownMenu(selectedPriority = Priority.valueOf(item.priority)) { newPriority ->
-            onValueChange(item.copy(priority = newPriority.name))
-        }
+        Text("Priorytet:")
+        PriorityRadioButtonGroup(
+            selectedPriority = Priority.valueOf(item.priority),
+            onPrioritySelected = { newPriority ->
+                onValueChange(item.copy(priority = newPriority.name))
+            }
+        )
         Spacer(modifier = Modifier.height(16.dp))
         DateField(selectedDate = LocalDateConverter.fromMillis(item.deadline)) { newDate ->
             onValueChange(item.copy(deadline = LocalDateConverter.toMillis(newDate)))
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = {
-                val newTask = item.toTodoTask()
 
-                onSave(newTask)
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Zapisz zadanie")
-        }
     }
 }
 
@@ -482,3 +450,56 @@ fun TodoTask.toTodoTaskForm(): TodoTaskForm = TodoTaskForm(
 enum class Priority {
     High, Medium, Low
 }
+@Composable
+fun PriorityRadioButtonGroup(
+    selectedPriority: Priority,
+    onPrioritySelected: (Priority) -> Unit
+) {
+    Column {
+        Priority.values().forEach { priority ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                RadioButton(
+                    selected = priority == selectedPriority,
+                    onClick = { onPrioritySelected(priority) }
+                )
+                Text(
+                    text = priority.name,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            }
+        }
+    }
+}
+/*const val notificationID = 121
+const val channelID = "Lab06 channel"
+private fun createNotificationChannel() {
+    val name = "Lab06 channel"
+    val descriptionText = "Lab06 is channel for notifications for approaching tasks."
+    val importance = NotificationManager.IMPORTANCE_DEFAULT
+    val channel = NotificationChannel(channelID , name, importance).apply {
+        description = descriptionText
+    }
+
+    val notificationManager: NotificationManager =
+        getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    notificationManager.createNotificationChannel(channel)
+}
+class NotificationHandler(private val context: Context) {
+    private val notificationManager =
+        context.getSystemService(NotificationManager::class.java)
+    fun showSimpleNotification() {
+        val notification = NotificationCompat.Builder(context, channelID)
+            .setContentTitle("Proste powiadomienie")
+            .setContentText("Tekst powiadomienia")
+            .setPriority(NotificationManager.IMPORTANCE_HIGH)
+            .setAutoCancel(true)
+            .build()
+        notificationManager.notify(notificationID, notification)
+    }
+}
+*/
