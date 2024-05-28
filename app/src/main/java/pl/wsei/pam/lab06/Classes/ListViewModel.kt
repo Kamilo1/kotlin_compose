@@ -32,6 +32,11 @@ class ListViewModel(val repository: TodoTaskRepository) : ViewModel() {
             }
         }
     }
+    fun deleteTask(task: TodoTask) {
+        viewModelScope.launch {
+            repository.deleteItem(task)
+        }
+    }
 
 
     companion object {
